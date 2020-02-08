@@ -4,12 +4,14 @@ defmodule Fds.MixProject do
   def project do
     [
       app: :fds,
-      version: "0.1.0",
-      elixir: "~> 1.9",
+      version: "0.2.0",
+      elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       description: "Erlang/Elixir's missing fast / functional data structures",
       package: package(),
       deps: [], #YO.
+      test_paths: ["test"],
+      test_pattern: "fds/*.exs",
     ]
   end
 

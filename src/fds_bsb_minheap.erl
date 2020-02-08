@@ -14,17 +14,17 @@
 %% 
 %% O(1)
 %%  new()
-%%  peek_min(Heap)
+%%  peek(Heap)
 %%
 %% O(log(n))
 %%  insert(Item, Heap)
-%%  delete_min(Heap)
+%%  delete(Heap)
 %%  merge(Heap1, Heap2)
 %% 
 %% O(nlog(n))
 %%  foldl(Fun, InitialAcc, Heap)
 
--export([new/0, insert/2, peek_min/1, delete_min/1, merge/2, foldl/3]).
+-export([new/0, insert/2, peek/1, delete/1, merge/2, foldl/3]).
 
 -record(tree, {root, rank=0, elem_rest=[], rest=[]}).
 -record(bsheap, {root, hheap=[]}).
@@ -38,10 +38,10 @@ merge(H1, H2) -> bs_merge(H1,H2).
 
 insert(E, H) -> bs_insert(E, H).
 
--spec peek_min(any()) -> any().
-peek_min(H) -> bs_lookup_min(H).
+-spec peek(any()) -> any().
+peek(H) -> bs_lookup_min(H).
 
-delete_min(H) -> bs_delete_min(H).
+delete(H) -> bs_delete_min(H).
 
 %% Bootstrapped Heap Interface
 
@@ -135,9 +135,9 @@ ins_tree(T1, [T2|Ts]) -> ins_tree(sbt_link(T1,T2), Ts).
 
 foldl(_Fun, Acc0, empty) -> Acc0;
 foldl(Fun, AccIn, QIn) ->
-  {ok, E} = peek_min(QIn),
+  {ok, E} = peek(QIn),
   Acc = Fun(E, AccIn),
-  {ok, Q} = delete_min(QIn),
+  {ok, Q} = delete(QIn),
   foldl(Fun, Acc, Q).
 
 %% EUnit Tests
@@ -151,8 +151,8 @@ enqueue_test() ->
   Value = 3,
   A0 = new(),
   A1 = insert(Value, A0),
-  ?assertMatch(error, peek_min(A0)),
-  ?assertMatch({ok, Value}, peek_min(A1)).
+  ?assertMatch(error, peek(A0)),
+  ?assertMatch({ok, Value}, peek(A1)).
 
 repeatedly(_Fun, 0) -> [];
 repeatedly(Fun, N) -> [Fun()| repeatedly(Fun, N-1)].
@@ -174,7 +174,7 @@ window_test() ->
   ?debugVal(length(MaxK)),
   First = lists:foldl(fun insert/2, new(), lists:sublist(Values, K)),
   Rest = lists:sublist(Values, K+1, N-K),
-  Q = lists:foldl(fun(E, Q0) -> {ok, Q1} = delete_min(insert(E, Q0)), Q1 end, First, Rest),
+  Q = lists:foldl(fun(E, Q0) -> {ok, Q1} = delete(insert(E, Q0)), Q1 end, First, Rest),
   ResultSet = to_list(Q),
   ?debugVal(ResultSet),
   ?debugVal(length(ResultSet)),

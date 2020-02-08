@@ -25,7 +25,6 @@ defmodule FDS.ArrayList.Test do
     assert ArrayList.get(al, 3) == :error
   end
 
-
   test "to_list/1" do
     al =
       ArrayList.new()
